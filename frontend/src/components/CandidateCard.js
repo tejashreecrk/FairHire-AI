@@ -3,6 +3,7 @@ import React from "react";
 function CandidateCard({ candidate }) {
 
   return (
+<<<<<<< HEAD
 
     <div style={{
       border: "1px solid #ccc",
@@ -21,6 +22,25 @@ function CandidateCard({ candidate }) {
 
     </div>
 
+=======
+    <div
+      style={{
+        border: "1px solid gray",
+        padding: "10px",
+        margin: "10px",
+      }}
+    >
+
+      <h3>{candidate.name}</h3>
+
+      <p>Skills: {candidate.skills}</p>
+
+      <p>Experience: {candidate.experience} years</p>
+
+      <p>Score: {candidate.score}</p>
+
+    </div>
+>>>>>>> 40f0d492afbb301c5b8559c572ae847d9b0d8a83
   );
 }
 
