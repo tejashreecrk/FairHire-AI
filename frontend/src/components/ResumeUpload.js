@@ -5,23 +5,45 @@ function ResumeUpload() {
 
   const [file, setFile] = useState(null);
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   const handleUpload = async () => {
 
+    if (!file) {
+      alert("Please select a file first");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("resume", file);
 
-    await axios.post("http://127.0.0.1:8000/resume/upload", formData);
+    try {
 
-    alert("Uploaded Successfully");
+      const response = await axios.post(
+        "http://localhost:8000/upload_resume",
+        formData
+      );
+
+      alert("Resume uploaded successfully!");
+      console.log(response.data);
+
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed");
+    }
+
   };
 
   return (
     <div>
 
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files[0])}
-      />
+      <h2>Upload Resume</h2>
+
+      <input type="file" onChange={handleFileChange} />
+
+      <br /><br />
 
       <button onClick={handleUpload}>
         Upload Resume

@@ -1,17 +1,19 @@
 import React from "react";
-import ResumeUpload from "../components/ResumeUpload";
 
-function CandidatePortal() {
+function CandidatePortal(){
 
-  return (
+  return(
+
     <div>
 
-      <h2>Candidate Portal</h2>
+      <h1>Candidate Portal</h1>
 
-      <ResumeUpload />
+      <p>Track your application status.</p>
 
     </div>
+
   );
+
 }
 
 export default CandidatePortal;
