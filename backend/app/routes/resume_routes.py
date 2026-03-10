@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+"""from fastapi import APIRouter, UploadFile, File
 import shutil
 import os
 
@@ -21,3 +21,12 @@ async def upload_resume(resume: UploadFile = File(...)):
         "message": "Resume uploaded",
         "filename": resume.filename
     }
+"""
+
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.post("/upload_resume")
+async def upload_resume():
+    return {"message": "Resume uploaded"}
