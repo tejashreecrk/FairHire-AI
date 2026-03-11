@@ -1,7 +1,7 @@
-
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
+from app.routes import counterfactual_routes   # ✅ ADDED
 
 app = FastAPI()
 
@@ -13,6 +13,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(counterfactual_routes.router)   # ✅ ADDED
 
 candidates = []
 
