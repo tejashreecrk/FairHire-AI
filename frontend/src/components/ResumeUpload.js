@@ -1,57 +1,61 @@
+
+
+
+
 import React, { useState } from "react";
 import axios from "axios";
 
 function ResumeUpload() {
 
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
+  const [bias, setBias] = useState(null);
 
-  const handleFileChange = (event) => {
-  setFiles(event.target.files);
-};
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleUpload = async () => {
 
-  if (files.length === 0) {
-    alert("Please select files first");
-    return;
-  }
+    const formData = new FormData();
+    formData.append("files", file);
 
-  const formData = new FormData();
+    try {
 
-  for (let i = 0; i < files.length; i++) {
-    formData.append("files", files[i]);
-  }
+      const res = await axios.post(
+        "http://127.0.0.1:8000/upload_resume",
+        formData
+      );
 
-  try {
+      console.log(res.data);
 
-    const response = await axios.post(
-      "http://localhost:8000/upload_resume",
-      formData
-    );
+      // store fairness metrics
+      setBias(res.data.bias_metrics);
 
-    alert("Resumes uploaded successfully!");
-    console.log(response.data);
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
 
-  } catch (error) {
-
-    console.error("Upload error:", error);
-    alert("Upload failed");
-
-  }
-
-};
+  };
 
   return (
     <div>
 
       <h2>Upload Resume</h2>
 
-      <input type="file" multiple onChange={handleFileChange} />
-
-      <br /><br />
+      <input type="file" onChange={handleFileChange} />
 
       <button onClick={handleUpload}>
-        Upload Resume
+        Upload
       </button>
+
+      {bias && (
+        <div>
+          <h3>Bias Metrics</h3>
+          <p>Male Selection Rate: {bias.male_selection_rate}</p>
+          <p>Female Selection Rate: {bias.female_selection_rate}</p>
+          <p>Disparate Impact: {bias.disparate_impact}</p>
+        </div>
+      )}
 
     </div>
   );
