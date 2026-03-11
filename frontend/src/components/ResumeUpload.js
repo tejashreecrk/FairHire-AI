@@ -3,44 +3,49 @@ import axios from "axios";
 
 function ResumeUpload() {
 
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
+  setFiles(event.target.files);
+};
   const handleUpload = async () => {
 
-    if (!file) {
-      alert("Please select a file first");
-      return;
-    }
+  if (files.length === 0) {
+    alert("Please select files first");
+    return;
+  }
 
-    const formData = new FormData();
-formData.append("file", file);
-    try {
+  const formData = new FormData();
 
-      const response = await axios.post(
-        "http://localhost:8000/upload_resume",
-        formData
-      );
+  for (let i = 0; i < files.length; i++) {
+    formData.append("files", files[i]);
+  }
 
-      alert("Resume uploaded successfully!");
-      console.log(response.data);
+  try {
 
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Upload failed");
-    }
+    const response = await axios.post(
+      "http://localhost:8000/upload_resume",
+      formData
+    );
 
-  };
+    alert("Resumes uploaded successfully!");
+    console.log(response.data);
+
+  } catch (error) {
+
+    console.error("Upload error:", error);
+    alert("Upload failed");
+
+  }
+
+};
 
   return (
     <div>
 
       <h2>Upload Resume</h2>
 
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" multiple onChange={handleFileChange} />
 
       <br /><br />
 

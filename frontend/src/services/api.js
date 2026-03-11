@@ -11,7 +11,7 @@ export const getCandidates = () =>
   API.get("/candidates");
 
 export const getBiasReport = () =>
-  API.get("/bias_report");
+  API.get("/bias");
 
 export const getExplainability = (id) =>
   API.get(`/explain/${id}`);
