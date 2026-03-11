@@ -35,75 +35,56 @@ async def upload_resume():
 
 
 
-from fastapi import APIRouter, UploadFile, File
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-import shutil
-import os
+from app.routes import counterfactual_routes   # ✅ ADDED
 
-from app.services.resume_parser import parse_resume
-from app.services.scoring_engine import compute_score
-from ai_modules.bias_detection import detect_bias
+app = FastAPI()
 
-router = APIRouter()
+# Allow frontend to connect
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-UPLOAD_FOLDER = "uploaded_resumes"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.include_router(counterfactual_routes.router)   # ✅ ADDED
 
-# Temporary candidate storage
 candidates = []
 
-@router.post("/upload_resume")
+@app.get("/")
+def read_root():
+    return {"message": "FairHire AI Backend Running"}
+
+# MULTIPLE FILE UPLOAD
+@app.post("/upload_resume")
 async def upload_resume(files: List[UploadFile] = File(...)):
 
-    job_required_skills = ["python", "machine learning", "sql"]
-
-    results = []
+    uploaded_candidates = []
 
     for file in files:
-
-        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-
-        # Save file
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
-        # Read text
-        with open(file_path, "r", errors="ignore") as f:
-            resume_text = f.read()
-
-        # Parse resume
-        parsed_data = parse_resume(resume_text)
-
-        skills = parsed_data["skills"]
-        experience = parsed_data["experience_years"]
-
-        # Score candidate
-        score = compute_score(skills, job_required_skills, experience)
-
-        selected = score > 0.6
-
-        candidate = {
-            "filename": file.filename,
-            "skills": skills,
-            "experience": experience,
-            "score": score,
-            "selected": selected,
-            "gender": "unknown"
-        }
-
+        candidate = {"name": file.filename}
         candidates.append(candidate)
-
-        results.append(candidate)
-
-    # Run bias detection
-    bias_metrics = detect_bias(candidates)
+        uploaded_candidates.append(candidate)
 
     return {
-        "message": "Resumes processed successfully",
-        "candidates": results,
-        "bias_metrics": bias_metrics
+        "message": "Resumes uploaded successfully",
+        "candidates": uploaded_candidates
     }
 
+@app.get("/candidates")
+def get_candidates():
+    return candidates
+
+@app.get("/bias")
+def bias_report():
+    return {
+        "male": 4,
+        "female": 3
+    }
 
 
 
