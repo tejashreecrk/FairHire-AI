@@ -1,58 +1,48 @@
 
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
+app = FastAPI()
 
-import React, { useState } from "react";
-import axios from "axios";
+# Allow frontend to connect
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-function ResumeUpload() {
+candidates = []
 
-  const [file, setFile] = useState(null);
+@app.get("/")
+def read_root():
+    return {"message": "FairHire AI Backend Running"}
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
+# MULTIPLE FILE UPLOAD
+@app.post("/upload_resume")
+async def upload_resume(files: List[UploadFile] = File(...)):
 
-  const handleUpload = async () => {
+    uploaded_candidates = []
 
-    if (!file) {
-      alert("Please select a file first");
-      return;
+    for file in files:
+        candidate = {"name": file.filename}
+        candidates.append(candidate)
+        uploaded_candidates.append(candidate)
+
+    return {
+        "message": "Resumes uploaded successfully",
+        "candidates": uploaded_candidates
     }
 
-    const formData = new FormData();
-formData.append("file", file);
-    try {
+@app.get("/candidates")
+def get_candidates():
+    return candidates
 
-      const response = await axios.post(
-        "http://localhost:8000/upload_resume",
-        formData
-      );
-
-      alert("Resume uploaded successfully!");
-      console.log(response.data);
-
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Upload failed");
+@app.get("/bias")
+def bias_report():
+    return {
+        "male": 4,
+        "female": 3
     }
-
-  };
-
-  return (
-    <div>
-
-      <h2>Upload Resume</h2>
-
-      <input type="file" onChange={handleFileChange} />
-
-      <br /><br />
-
-      <button onClick={handleUpload}>
-        Upload Resume
-      </button>
-
-    </div>
-  );
-}
-
-export default ResumeUpload;
