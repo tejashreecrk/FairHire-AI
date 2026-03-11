@@ -1,50 +1,70 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
-from typing import List
-from app.routes import counterfactual_routes   # ✅ ADDED
+import React, { useState } from "react";
+import axios from "axios";
 
-app = FastAPI()
+function ResumeUpload() {
 
-# Allow frontend to connect
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+  const [files, setFiles] = useState([]);
 
-app.include_router(counterfactual_routes.router)   # ✅ ADDED
+  const handleFileChange = (event) => {
+    setFiles(event.target.files);
+  };
 
-candidates = []
+  const handleUpload = async () => {
 
-@app.get("/")
-def read_root():
-    return {"message": "FairHire AI Backend Running"}
-
-# MULTIPLE FILE UPLOAD
-@app.post("/upload_resume")
-async def upload_resume(files: List[UploadFile] = File(...)):
-
-    uploaded_candidates = []
-
-    for file in files:
-        candidate = {"name": file.filename}
-        candidates.append(candidate)
-        uploaded_candidates.append(candidate)
-
-    return {
-        "message": "Resumes uploaded successfully",
-        "candidates": uploaded_candidates
+    if (files.length === 0) {
+      alert("Please select resumes first");
+      return;
     }
 
-@app.get("/candidates")
-def get_candidates():
-    return candidates
+    const formData = new FormData();
 
-@app.get("/bias")
-def bias_report():
-    return {
-        "male": 4,
-        "female": 3
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
     }
+
+    try {
+
+      const response = await axios.post(
+        "http://localhost:8000/upload_resume",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      alert("Resumes uploaded successfully!");
+      console.log(response.data);
+
+    } catch (error) {
+
+      console.error("Upload error:", error);
+      alert("Upload failed");
+
+    }
+
+  };
+
+  return (
+    <div>
+
+      <h2>Upload Resumes</h2>
+
+      <input
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
+
+      <br /><br />
+
+      <button onClick={handleUpload}>
+        Upload Resumes
+      </button>
+
+    </div>
+  );
+}
+
+export default ResumeUpload;
