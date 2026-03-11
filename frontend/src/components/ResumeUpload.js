@@ -17,8 +17,7 @@ function ResumeUpload() {
     }
 
     const formData = new FormData();
-    formData.append("resume", file);
-
+formData.append("file", file);
     try {
 
       const response = await axios.post(
