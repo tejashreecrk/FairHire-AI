@@ -20,8 +20,11 @@ app.include_router(bias_routes.router)
 def root():
     return {"message": "FairHire AI Backend Running"}"""
 
+
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
+from app.routes import counterfactual_routes   # ✅ ADDED
 
 app = FastAPI()
 
@@ -34,18 +37,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(counterfactual_routes.router)   # ✅ ADDED
+
 candidates = []
 
 @app.get("/")
 def read_root():
     return {"message": "FairHire AI Backend Running"}
 
+# MULTIPLE FILE UPLOAD
 @app.post("/upload_resume")
-async def upload_resume(file: UploadFile = File(...)):
-    candidate = {"name": file.filename}
-    candidates.append(candidate)
+async def upload_resume(files: List[UploadFile] = File(...)):
 
-    return {"message": "Resume uploaded", "candidate": candidate}
+    uploaded_candidates = []
+
+    for file in files:
+        candidate = {"name": file.filename}
+        candidates.append(candidate)
+        uploaded_candidates.append(candidate)
+
+    return {
+        "message": "Resumes uploaded successfully",
+        "candidates": uploaded_candidates
+    }
 
 @app.get("/candidates")
 def get_candidates():

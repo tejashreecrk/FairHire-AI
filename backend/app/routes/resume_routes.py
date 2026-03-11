@@ -31,16 +31,22 @@ router = APIRouter()
 async def upload_resume():
     return {"message": "Resume uploaded"}"""
 
+
 from fastapi import APIRouter, UploadFile, File
+from typing import List
 
 router = APIRouter()
 
 @router.post("/upload_resume")
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(files: List[UploadFile] = File(...)):
 
-    print("Received file:", file.filename)
+    filenames = []
+
+    for file in files:
+        print("Received:", file.filename)
+        filenames.append(file.filename)
 
     return {
-        "message": "Resume uploaded successfully",
-        "filename": file.filename
+        "message": "Resumes uploaded successfully",
+        "files": filenames
     }
