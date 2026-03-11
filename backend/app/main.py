@@ -22,15 +22,8 @@ def root():
 
 
 from fastapi import FastAPI, UploadFile, File
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from app.routes import counterfactual_routes   # ✅ ADDED
-
-class CandidateInput(BaseModel):
-    name: str
-    college: str
-    score: int
 
 app = FastAPI()
 
@@ -42,8 +35,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(counterfactual_routes.router)   # ✅ ADDED
 
 candidates = []
 
@@ -76,28 +67,4 @@ def bias_report():
     return {
         "male": 4,
         "female": 3
-    }
-
-
-
-
-@app.post("/counterfactual_test")
-def counterfactual_test(candidate: CandidateInput):
-
-    original_score = candidate.score
-    counterfactual_college = "IIT"
-
-    if candidate.college != "IIT":
-        counterfactual_score = original_score + 5
-        bias_detected = True
-    else:
-        counterfactual_score = original_score
-        bias_detected = False
-
-    return {
-        "original_college": candidate.college,
-        "counterfactual_college": counterfactual_college,
-        "original_score": original_score,
-        "counterfactual_score": counterfactual_score,
-        "bias_detected": bias_detected
     }
