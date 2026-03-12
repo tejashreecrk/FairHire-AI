@@ -1,28 +1,31 @@
+import PyPDF2
 
+def parse_resume(file_path):
 
+    text = ""
 
-import spacy
+    with open(file_path, "rb") as file:
+        reader = PyPDF2.PdfReader(file)
 
-nlp = spacy.load("en_core_web_sm")
+        for page in reader.pages:
+            text += page.extract_text()
 
-def parse_resume(text):
-    doc = nlp(text)
+    text = text.lower()
 
-    skills = []
+    skills_list = ["python", "machine learning", "sql", "java", "react"]
+
+    found_skills = []
+
+    for skill in skills_list:
+        if skill in text:
+            found_skills.append(skill)
+
+    # simple experience detection
     experience_years = 0
-
-    skill_keywords = ["python", "machine learning", "data analysis", "sql"]
-
-    for token in doc:
-        if token.text.lower() in skill_keywords:
-            skills.append(token.text)
-
-    for ent in doc.ents:
-        if ent.label_ == "DATE":
-            if "year" in ent.text:
-                experience_years += 1
+    if "year" in text:
+        experience_years = 2
 
     return {
-        "skills": list(set(skills)),
+        "skills": found_skills,
         "experience_years": experience_years
     }

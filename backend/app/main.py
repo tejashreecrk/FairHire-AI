@@ -20,14 +20,14 @@ app.include_router(bias_routes.router)
 def root():
     return {"message": "FairHire AI Backend Running"}"""
 
-
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List
+
+from app.routes import resume_routes
 
 app = FastAPI()
 
-# Allow frontend to connect
+# Allow frontend connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,35 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-candidates = []
+# include route file
+app.include_router(resume_routes.router)
 
 @app.get("/")
-def read_root():
+def root():
     return {"message": "FairHire AI Backend Running"}
-
-# MULTIPLE FILE UPLOAD
-@app.post("/upload_resume")
-async def upload_resume(files: List[UploadFile] = File(...)):
-
-    uploaded_candidates = []
-
-    for file in files:
-        candidate = {"name": file.filename}
-        candidates.append(candidate)
-        uploaded_candidates.append(candidate)
-
-    return {
-        "message": "Resumes uploaded successfully",
-        "candidates": uploaded_candidates
-    }
-
-@app.get("/candidates")
-def get_candidates():
-    return candidates
-
-@app.get("/bias")
-def bias_report():
-    return {
-        "male": 4,
-        "female": 3
-    }

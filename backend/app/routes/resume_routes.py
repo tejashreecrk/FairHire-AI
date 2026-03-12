@@ -52,7 +52,8 @@ candidates = []
 
 @router.post("/upload_resume")
 async def upload_resume(files: List[UploadFile] = File(...)):
-
+    global candidates
+    candidates = []
     job_skills = ["python", "machine learning", "sql"]
 
     processed_candidates = []
@@ -65,15 +66,11 @@ async def upload_resume(files: List[UploadFile] = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # read text
-        with open(file_path, "r", errors="ignore") as f:
-            text = f.read()
-
         # parse resume
-        parsed = parse_resume(text)
+        parsed = parse_resume(file_path)
 
-        skills = parsed["skills"]
-        experience = parsed["experience_years"]
+        skills = parsed.get("skills", [])
+        experience = parsed.get("experience_years", 0)
 
         # score candidate
         score = compute_score(skills, job_skills, experience)
@@ -84,7 +81,7 @@ async def upload_resume(files: List[UploadFile] = File(...)):
             "name": file.filename,
             "skills": skills,
             "experience": experience,
-            "score": score,
+            "score": round(score * 100, 2),
             "selected": selected,
             "gender": "unknown"
         }
@@ -105,10 +102,28 @@ async def upload_resume(files: List[UploadFile] = File(...)):
     }
 @router.get("/candidates")
 def get_candidates():
-    return candidates
+    sorted_candidates = sorted(
+        candidates,
+        key=lambda x: x["score"],
+        reverse=True
+    )
+    return sorted_candidates
 
 @router.get("/bias")
 def get_bias():
+
+    if len(candidates) == 0:
+        return {
+            "bias_metrics": {
+                "male_selection_rate": 0,
+                "female_selection_rate": 0,
+                "disparate_impact": 0
+            },
+            "fairness": {
+                "fairness_status": "No candidates uploaded"
+            }
+        }
+
     bias_metrics = detect_bias(candidates)
     fairness = compute_fairness(bias_metrics["disparate_impact"])
 
