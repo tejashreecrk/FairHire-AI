@@ -71,7 +71,7 @@ async def upload_resume(files: List[UploadFile] = File(...)):
 
         skills = parsed.get("skills", [])
         experience = parsed.get("experience_years", 0)
-
+        gender=parsed.get("gender","unknown")
         # score candidate
         score = compute_score(skills, job_skills, experience)
 
@@ -83,7 +83,7 @@ async def upload_resume(files: List[UploadFile] = File(...)):
             "experience": experience,
             "score": round(score * 100, 2),
             "selected": selected,
-            "gender": "unknown"
+            "gender": gender
         }
 
         candidates.append(candidate)
