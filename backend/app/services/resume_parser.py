@@ -30,6 +30,7 @@ def parse_resume(file_path):
         "experience_years": experience_years
     }"""
 
+"""
 import PyPDF2
 
 
@@ -87,6 +88,98 @@ def parse_resume(file_path):
 
     if "year" in text or "years" in text:
         experience_years = 2
+
+    # -------------------------------
+    # Gender Detection
+    # -------------------------------
+    gender = detect_gender(text)
+
+    # -------------------------------
+    # Final Parsed Data
+    # -------------------------------
+    return {
+        "skills": found_skills,
+        "experience_years": experience_years,
+        "gender": gender
+    }
+"""
+
+import PyPDF2
+import re
+
+
+# -------------------------------
+# Gender Detection Function
+# -------------------------------
+def detect_gender(text):
+
+    text = text.lower()
+
+    if "female" in text:
+        return "female"
+
+    elif "male" in text:
+        return "male"
+
+    else:
+        return "unknown"
+
+
+# -------------------------------
+# Experience Extraction
+# -------------------------------
+def extract_experience(text):
+
+    text = text.lower()
+
+    # match patterns like "3 years", "5+ years", "2 year"
+    matches = re.findall(r'(\d+)\+?\s*(?:year|years)', text)
+
+    if matches:
+        # take highest value found
+        years = [int(x) for x in matches]
+        return max(years)
+
+    return 0
+
+
+# -------------------------------
+# Resume Parsing Function
+# -------------------------------
+def parse_resume(file_path):
+
+    text = ""
+
+    # Extract text from PDF
+    with open(file_path, "rb") as file:
+
+        reader = PyPDF2.PdfReader(file)
+
+        for page in reader.pages:
+
+            page_text = page.extract_text()
+
+            if page_text:
+                text += page_text
+
+    text = text.lower()
+
+    # -------------------------------
+    # Skill Detection
+    # -------------------------------
+    skills_list = ["python", "machine learning", "sql", "java", "react"]
+
+    found_skills = []
+
+    for skill in skills_list:
+
+        if skill in text:
+            found_skills.append(skill)
+
+    # -------------------------------
+    # Experience Detection
+    # -------------------------------
+    experience_years = extract_experience(text)
 
     # -------------------------------
     # Gender Detection

@@ -41,6 +41,7 @@ from app.services.resume_parser import parse_resume
 from app.services.scoring_engine import compute_score
 from ai_modules.bias_detection import detect_bias
 from ai_modules.fairness_metrics import compute_fairness
+from ai_modules.counterfactual_test import simulate_counterfactual
 
 router = APIRouter()
 
@@ -52,11 +53,14 @@ candidates = []
 
 @router.post("/upload_resume")
 async def upload_resume(files: List[UploadFile] = File(...)):
+
     global candidates
     candidates = []
+
     job_skills = ["python", "machine learning", "sql"]
 
     processed_candidates = []
+    counterfactual_results = []
 
     for file in files:
 
@@ -71,7 +75,9 @@ async def upload_resume(files: List[UploadFile] = File(...)):
 
         skills = parsed.get("skills", [])
         experience = parsed.get("experience_years", 0)
-        gender=parsed.get("gender","unknown")
+        gender = parsed.get("gender", "unknown")
+        college = parsed.get("college", "unknown")
+
         # score candidate
         score = compute_score(skills, job_skills, experience)
 
@@ -83,11 +89,20 @@ async def upload_resume(files: List[UploadFile] = File(...)):
             "experience": experience,
             "score": round(score * 100, 2),
             "selected": selected,
-            "gender": gender
+            "gender": gender,
+            "college": college
         }
 
         candidates.append(candidate)
         processed_candidates.append(candidate)
+
+        # run counterfactual test
+        counterfactual = simulate_counterfactual(candidate)
+
+        counterfactual_results.append({
+            "candidate": file.filename,
+            "counterfactual_analysis": counterfactual
+        })
 
     # run bias detection
     bias_metrics = detect_bias(candidates)
@@ -97,17 +112,23 @@ async def upload_resume(files: List[UploadFile] = File(...)):
     return {
         "message": "Resumes processed successfully",
         "candidates": processed_candidates,
+        "counterfactual_results": counterfactual_results,
         "bias_metrics": bias_metrics,
         "fairness": fairness
     }
+
+
 @router.get("/candidates")
 def get_candidates():
+
     sorted_candidates = sorted(
         candidates,
         key=lambda x: x["score"],
         reverse=True
     )
+
     return sorted_candidates
+
 
 @router.get("/bias")
 def get_bias():
@@ -131,7 +152,3 @@ def get_bias():
         "bias_metrics": bias_metrics,
         "fairness": fairness
     }
-
-
-
-

@@ -8,7 +8,7 @@ def simulate_counterfactual(candidate):
     modified_candidate = candidate.copy()
     modified_candidate["college"] = "IIT"
 
-    # simulate score change (example logic)
+    # simulate score change
     modified_score = original_score
 
     if original_college != "IIT":
