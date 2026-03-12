@@ -11,9 +11,10 @@ function Dashboard() {
     fetchCandidates();
   }, []);
 
-  // ADD YOUR FUNCTION HERE
+  // FETCH CANDIDATES FROM BACKEND
   const fetchCandidates = async () => {
     try {
+
       const res = await axios.get("http://127.0.0.1:8000/candidates");
 
       console.log("Candidates data:", res.data);
@@ -21,24 +22,65 @@ function Dashboard() {
       setCandidates(res.data);
 
     } catch (error) {
+
       console.error("Error fetching candidates:", error);
+
     }
   };
 
   return (
-    <div>
+
+    <div className="section">
 
       <h2>Candidate Ranking</h2>
 
-      {candidates.map((candidate, index) => (
-        <CandidateCard
-          key={index}
-          candidate={candidate}
-        />
-      ))}
+      {/* Dashboard statistics cards */}
+      <div className="cards">
+
+        <div className="card">
+          <h3>Total Candidates</h3>
+          <p>{candidates.length}</p>
+        </div>
+
+        <div className="card">
+          <h3>Selected</h3>
+          <p>{candidates.filter(c => c.selected).length}</p>
+        </div>
+
+        <div className="card">
+          <h3>Rejected</h3>
+          <p>{candidates.filter(c => !c.selected).length}</p>
+        </div>
+
+      </div>
+
+      {/* Candidate list */}
+      <div style={{marginTop:"20px"}}>
+
+        {candidates.length === 0 ? (
+
+          <p>Resumes Uploaded.</p>
+
+        ) : (
+
+          candidates.map((candidate, index) => (
+
+            <CandidateCard
+              key={index}
+              candidate={candidate}
+              rank={index+1}
+            />
+
+          ))
+
+        )}
+
+      </div>
 
     </div>
+
   );
+
 }
 
 export default Dashboard;

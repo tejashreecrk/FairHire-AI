@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
 function CandidateCard({ candidate }) {
+
+  const [status, setStatus] = useState("Pending");
+
+  const handleAccept = () => {
+    setStatus("Accepted");
+  };
+
+  const handleReject = () => {
+    setStatus("Rejected");
+  };
 
   return (
     <div
@@ -20,9 +30,20 @@ function CandidateCard({ candidate }) {
 
       <p><b>Match Score:</b> {candidate.score}%</p>
 
+      {/* NEW STATUS DISPLAY */}
+      <p><b>Status:</b> {status}</p>
+
+      {/* NEW BUTTONS */}
+      <button onClick={handleAccept} style={{marginRight:"10px"}}>
+        Accept
+      </button>
+
+      <button onClick={handleReject}>
+        Reject
+      </button>
+
     </div>
   );
-
 }
 
 export default CandidateCard;

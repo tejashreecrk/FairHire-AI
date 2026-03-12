@@ -6,6 +6,7 @@ import RecruiterDashboard from "./pages/RecruiterDashboard";
 import CandidatePortal from "./pages/CandidatePortal";
 import ComplianceReport from "./pages/ComplianceReport";
 
+
 function App() {
 
   return (

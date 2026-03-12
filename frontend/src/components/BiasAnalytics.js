@@ -33,14 +33,20 @@ function BiasAnalytics() {
   };
 
   const data = {
-    labels: ["Gender", "College", "Experience"],
-    datasets: [
-      {
-        label: "Bias Score",
-        data: metrics
-      }
-    ]
-  };
+  labels: ["Male Selection Rate", "Female Selection Rate"],
+  datasets: [
+    {
+      label: "Bias Score",
+      data: metrics?.bias_metrics
+        ? [
+            metrics.bias_metrics.male_selection_rate,
+            metrics.bias_metrics.female_selection_rate
+          ]
+        : [0, 0],
+      backgroundColor: ["#36A2EB", "#FF6384"]
+    }
+  ]
+};
 
   return (
     <div>

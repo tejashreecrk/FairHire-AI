@@ -55,7 +55,7 @@ function ResumeUpload() {
 
 };
   return (
-    <div>
+    <div className="section">
 
       <h2>Upload Resumes</h2>
 
