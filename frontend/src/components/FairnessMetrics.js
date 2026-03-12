@@ -1,23 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-function FairnessMetrics(){
+function FairnessMetrics() {
 
-  return(
+  const [bias, setBias] = useState(null);
 
+  const fetchBias = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/bias");
+      setBias(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBias();
+  }, []);
+
+  if (!bias) return <p>Loading...</p>;
+
+  return (
     <div>
-
       <h2>Fairness Metrics</h2>
 
-      <p>Gender Fairness Score: 0.91</p>
+      <p>Male Selection Rate: {bias.bias_metrics.male_selection_rate}</p>
+      <p>Female Selection Rate: {bias.bias_metrics.female_selection_rate}</p>
+      <p>Disparate Impact: {bias.bias_metrics.disparate_impact}</p>
 
-      <p>College Diversity Score: 0.87</p>
-
-      <p>Experience Bias Score: 0.82</p>
-
+      <h3>{bias.fairness.fairness_status}</h3>
     </div>
-
   );
-
 }
 
 export default FairnessMetrics;

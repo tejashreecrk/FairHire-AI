@@ -11,41 +11,48 @@ function ResumeUpload() {
 
   const handleUpload = async () => {
 
-    if (files.length === 0) {
-      alert("Please select resumes first");
-      return;
-    }
+  if (files.length === 0) {
+    alert("Please select resumes first");
+    return;
+  }
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
-    }
+  for (let i = 0; i < files.length; i++) {
+    formData.append("files", files[i]);
+  }
 
-    try {
+  try {
 
-      const response = await axios.post(
-        "http://localhost:8000/upload_resume",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    // Upload resumes
+    const uploadResponse = await axios.post(
+      "http://localhost:8000/upload_resume",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-      alert("Resumes uploaded successfully!");
-      console.log(response.data);
+    console.log("Upload result:", uploadResponse.data);
 
-    } catch (error) {
+    // Fetch updated bias metrics
+    const biasResponse = await axios.get("http://localhost:8000/bias");
 
-      console.error("Upload error:", error);
-      alert("Upload failed");
+    console.log("Bias metrics:", biasResponse.data);
 
-    }
+    alert("Resumes uploaded and metrics updated!");
+    window.location.reload();
 
-  };
+  } catch (error) {
 
+    console.error("Upload error:", error);
+    alert("Upload failed");
+
+  }
+
+};
   return (
     <div>
 
