@@ -43,6 +43,7 @@ function ResumeUpload() {
     console.log("Bias metrics:", biasResponse.data);
 
     alert("Resumes uploaded and metrics updated!");
+    window.location.reload();
     
 
   } catch (error) {
