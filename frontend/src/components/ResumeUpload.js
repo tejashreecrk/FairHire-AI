@@ -26,7 +26,7 @@ function ResumeUpload() {
 
     // Upload resumes
     const uploadResponse = await axios.post(
-      "http://localhost:8000/upload_resume",
+      "http://127.0.0.1:8000/upload_resume",
       formData,
       {
         headers: {
@@ -43,7 +43,7 @@ function ResumeUpload() {
     console.log("Bias metrics:", biasResponse.data);
 
     alert("Resumes uploaded and metrics updated!");
-    window.location.reload();
+    
 
   } catch (error) {
 

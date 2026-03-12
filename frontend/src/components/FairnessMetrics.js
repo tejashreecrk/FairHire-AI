@@ -3,22 +3,33 @@ import axios from "axios";
 
 function FairnessMetrics() {
 
-  const [bias, setBias] = useState(null);
+  const [bias, setBias] = useState({});
 
-  const fetchBias = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/bias");
-      setBias(res.data);
-    } catch (err) {
-      console.error(err);
+const fetchBias = async () => {
+
+  try {
+    const res = await axios.get("http://localhost:8000/bias_report");
+    setBias(res.data);
+  } catch (error) {
+
+    if (error.response) {
+      alert(error.response.data.detail);
+    } else {
+      alert("Server error while checking bias");
     }
-  };
+
+  }
+
+};
 
   useEffect(() => {
+   
     fetchBias();
   }, []);
 
-  if (!bias) return <p>Loading...</p>;
+  if (!bias || !bias.bias_metrics) {
+  return <p>No fairness data yet. Upload resumes first.</p>;
+}
 
   return (
     <div>

@@ -6,14 +6,20 @@ function Dashboard() {
 
   const [candidates, setCandidates] = useState([]);
 
+  // THIS RUNS WHEN PAGE LOADS
   useEffect(() => {
     fetchCandidates();
   }, []);
 
+  // ADD YOUR FUNCTION HERE
   const fetchCandidates = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/candidates");
+      const res = await axios.get("http://127.0.0.1:8000/candidates");
+
+      console.log("Candidates data:", res.data);
+
       setCandidates(res.data);
+
     } catch (error) {
       console.error("Error fetching candidates:", error);
     }
@@ -22,18 +28,14 @@ function Dashboard() {
   return (
     <div>
 
-      <h2>Candidate Dashboard</h2>
+      <h2>Candidate Ranking</h2>
 
-      {candidates.length === 0 ? (
-        <p>No candidates yet. Upload resumes.</p>
-      ) : (
-        candidates.map((candidate, index) => (
-          <CandidateCard
-            key={index}
-            candidate={candidate}
-          />
-        ))
-      )}
+      {candidates.map((candidate, index) => (
+        <CandidateCard
+          key={index}
+          candidate={candidate}
+        />
+      ))}
 
     </div>
   );
