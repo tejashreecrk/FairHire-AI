@@ -4,7 +4,7 @@ from ai_modules.fairness_metrics import calculate_fairness
 
 router = APIRouter()
 
-@router.get("/bias_report")
+@router.get("/bias")
 def bias_report():
     try:
         data = detect_bias()

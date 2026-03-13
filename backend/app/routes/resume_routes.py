@@ -77,6 +77,11 @@ async def upload_resume(files: List[UploadFile] = File(...)):
         experience = parsed.get("experience_years", 0)
         gender = parsed.get("gender", "unknown")
         college = parsed.get("college", "unknown")
+        portfolio = parsed.get("portfolio", False)
+        freelance = parsed.get("freelance", False)
+        career_gap = parsed.get("career_gap", False)
+
+
 
         # score candidate
         score = compute_score(skills, job_skills, experience)
@@ -90,7 +95,10 @@ async def upload_resume(files: List[UploadFile] = File(...)):
             "score": round(score * 100, 2),
             "selected": selected,
             "gender": gender,
-            "college": college
+            "college": college,
+            "portfolio": portfolio,
+            "freelance": freelance,
+            "career_gap": career_gap
         }
 
         candidates.append(candidate)

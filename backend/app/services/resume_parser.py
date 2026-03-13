@@ -136,11 +136,66 @@ def extract_experience(text):
     matches = re.findall(r'(\d+)\+?\s*(?:year|years)', text)
 
     if matches:
-        # take highest value found
         years = [int(x) for x in matches]
         return max(years)
 
     return 0
+
+
+# -------------------------------
+# Inclusive Profile Detection
+# -------------------------------
+
+# Portfolio Detection
+def detect_portfolio(text):
+
+    portfolio_keywords = [
+        "github.com",
+        "portfolio",
+        "kaggle",
+        "behance",
+        "dribbble"
+    ]
+
+    for word in portfolio_keywords:
+        if word in text:
+            return True
+
+    return False
+
+
+# Freelance Detection
+def detect_freelance(text):
+
+    freelance_keywords = [
+        "freelance",
+        "self employed",
+        "contract work",
+        "independent developer"
+    ]
+
+    for word in freelance_keywords:
+        if word in text:
+            return True
+
+    return False
+
+
+# Career Gap Detection
+def detect_career_gap(text):
+
+    gap_keywords = [
+        "career break",
+        "gap year",
+        "career pause",
+        "personal sabbatical"
+    ]
+
+    for word in gap_keywords:
+        if word in text:
+            return True
+
+    return False
 
 
 # -------------------------------
@@ -172,7 +227,6 @@ def parse_resume(file_path):
     found_skills = []
 
     for skill in skills_list:
-
         if skill in text:
             found_skills.append(skill)
 
@@ -187,10 +241,20 @@ def parse_resume(file_path):
     gender = detect_gender(text)
 
     # -------------------------------
+    # Inclusive Profile Detection
+    # -------------------------------
+    portfolio = detect_portfolio(text)
+    freelance = detect_freelance(text)
+    career_gap = detect_career_gap(text)
+
+    # -------------------------------
     # Final Parsed Data
     # -------------------------------
     return {
         "skills": found_skills,
         "experience_years": experience_years,
-        "gender": gender
+        "gender": gender,
+        "portfolio": portfolio,
+        "freelance": freelance,
+        "career_gap": career_gap
     }
