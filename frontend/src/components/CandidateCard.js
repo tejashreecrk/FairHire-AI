@@ -30,6 +30,54 @@ function CandidateCard({ candidate }) {
 
       <p><b>Match Score:</b> {candidate.score}%</p>
 
+
+      {/* Inclusive Profile Indicators */}
+
+{(candidate.portfolio || candidate.freelance || candidate.career_gap) && (
+
+  <div style={{marginTop:"8px"}}>
+
+    <p><b>Inclusive Profile:</b></p>
+
+    {candidate.portfolio && (
+      <span style={{
+        background:"#e0f7fa",
+        padding:"4px 8px",
+        marginRight:"5px",
+        borderRadius:"5px"
+      }}>
+        Portfolio
+      </span>
+    )}
+
+    {candidate.freelance && (
+      <span style={{
+        background:"#fff3e0",
+        padding:"4px 8px",
+        marginRight:"5px",
+        borderRadius:"5px"
+      }}>
+        Freelance Experience
+      </span>
+    )}
+
+    {candidate.career_gap && (
+      <span style={{
+        background:"#f3e5f5",
+        padding:"4px 8px",
+        marginRight:"5px",
+        borderRadius:"5px"
+      }}>
+        Career Break
+      </span>
+    )}
+
+  </div>
+
+)}
+
+
+
       {/* NEW STATUS DISPLAY */}
       <p><b>Status:</b> {status}</p>
 

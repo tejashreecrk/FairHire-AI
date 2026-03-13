@@ -130,15 +130,6 @@ button:hover{
   font-size:14px;
 }
 
-.dashboard-layout{
-  display:flex;
-}
-
-.dashboard-content{
-  padding:20px;
-  flex:1;
-}
-
 /* Chart container */
 
 canvas{

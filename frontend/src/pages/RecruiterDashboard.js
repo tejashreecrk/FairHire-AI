@@ -1,4 +1,8 @@
+
 import React from "react";
+
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 import ResumeUpload from "../components/ResumeUpload";
 import CandidateList from "../components/CandidateList";
@@ -6,23 +10,38 @@ import BiasAnalytics from "../components/BiasAnalytics";
 import FairnessMetrics from "../components/FairnessMetrics";
 import ExplainabilityPanel from "../components/ExplainabilityPanel";
 
-function RecruiterDashboard(){
+function RecruiterDashboard() {
 
-  return(
+  return (
 
-    <div>
+    <div className="dashboard-container">
 
-      <h1>FairHire AI Recruiter Dashboard</h1>
+      {/* Top Navigation */}
+      <Navbar />
 
-      <ResumeUpload/>
+      <div className="dashboard-layout">
 
-      <CandidateList/>
+        {/* Left Sidebar */}
+        <Sidebar />
 
-      <BiasAnalytics/>
+        {/* Main Content */}
+        <div className="dashboard-content">
 
-      <FairnessMetrics/>
+          <h1>FairHire AI Recruiter Dashboard</h1>
 
-      <ExplainabilityPanel/>
+          <ResumeUpload />
+
+          <CandidateList />
+
+          <BiasAnalytics />
+
+          <FairnessMetrics />
+
+          <ExplainabilityPanel />
+
+        </div>
+
+      </div>
 
     </div>
 

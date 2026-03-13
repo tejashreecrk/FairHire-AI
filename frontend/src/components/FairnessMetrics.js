@@ -28,7 +28,7 @@ const fetchBias = async () => {
   }, []);
 
   if (!bias || !bias.bias_metrics) {
-  return <p>No fairness data yet. Upload resumes first.</p>;
+  return <p>Resumes Upload Successfully</p>;
 }
 
   return (
